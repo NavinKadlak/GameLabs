@@ -30,7 +30,7 @@ fun LibraryScreen(
                     Column {
                         Box(modifier = Modifier.padding()) {
                             Greeting(
-                                name = "Library",
+                                name = "Bookmark",
                                 modifier = Modifier.padding(20.dp,20.dp,0.dp,0.dp)
                             )
                         }

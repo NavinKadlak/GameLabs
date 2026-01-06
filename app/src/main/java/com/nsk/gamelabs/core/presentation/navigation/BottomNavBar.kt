@@ -17,7 +17,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
     fun BottomNavBar(navController: NavHostController) {
         val items = listOf(
             ScreenBottomNav.Home,
-            ScreenBottomNav.Library,
+            ScreenBottomNav.Search,
+            ScreenBottomNav.Bookmark,
         )
 
         val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -38,7 +39,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
                         contentDescription = null
                     ) },
                     label = { Text(
-                        text = "Home",
+                        text = screen.title,
 //                        color = Color.Black // Force color here to test visibility
                     )
                             },

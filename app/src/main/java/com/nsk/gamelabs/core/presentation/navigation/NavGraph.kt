@@ -21,8 +21,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.nsk.gamelabs.core.presentation.navigation.screen.HomeScreen
 import com.nsk.gamelabs.core.presentation.navigation.screen.LibraryScreen
+import com.nsk.gamelabs.core.presentation.navigation.screen.SearchScreen
 import com.nsk.gamelabs.core.presentation.viewModel.HomeScreenViewModel
 import com.nsk.gamelabs.core.presentation.viewModel.LibraryViewModel
+import com.nsk.gamelabs.core.presentation.viewModel.SearchViewModel
 
 
 // Main NavGraph function - Call this in Scaffold
@@ -50,24 +52,25 @@ import com.nsk.gamelabs.core.presentation.viewModel.LibraryViewModel
                 )
             }
 
-            // Library Screen
-            composable(ScreenBottomNav.Library.route) {
+            // Bookmark Screen
+            composable(ScreenBottomNav.Search.route) {
+                val viewModel: SearchViewModel = hiltViewModel()
+                SearchScreen(
+                    viewModel = viewModel,
+                    navController = navController
+                )
+            }
+            // Bookmark Screen
+            composable(ScreenBottomNav.Bookmark.route) {
                 val viewModel: LibraryViewModel = hiltViewModel()
                 LibraryScreen(
                     viewModel = viewModel,
                     navController = navController
                 )
             }
-
         }
     }
 }
 
 
-
-private fun getIconForScreen(screen: ScreenBottomNav) = when(screen) {
-    ScreenBottomNav.Home -> Icons.Default.Home
-    ScreenBottomNav.Library -> Icons.Default.Edit
-
-}
 
