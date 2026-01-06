@@ -12,9 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nsk.gamelabs.ui.theme.GameLabsTheme
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -34,7 +37,13 @@ fun HomeScreen(
                             )
                         }
                         Box(modifier = Modifier.padding(10.dp,0.dp,10.dp,0.dp)) {
-                            GameCategory()                        }
+
+                            val state by viewModel.chipUiState.collectAsState()
+
+
+                            GameCategory(state.chips,
+                                selectedIndex = state.selectedIndex,
+                                onItemClick = { index -> viewModel.onChipSelected(index) })                        }
                     }
 
 
@@ -51,19 +60,24 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun GameCategory(
-    onItemClick: (String) -> Unit = {}
+    itemList: List<String>,
+    selectedIndex: Int,
+    onItemClick: (Int) -> Unit = {}
+
 ) {
-    val itemList = List(10) { index -> "Item ${index + 1}" }
 
     LazyRow  {
-        items(itemList) { item ->
+
+        itemsIndexed(itemList) { index, item ->
+            val isSelected = index == selectedIndex
+
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = DarkerGrey
+                    containerColor = if (isSelected) Color.Red else DarkerGrey
                 ),
                 modifier = Modifier
                     .padding(10.dp)
-                    .clickable { onItemClick(item) },
+                    .clickable { onItemClick(index) },
 
 
 
