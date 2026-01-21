@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.nsk.gamelabs.core.data.remote.model.GenresEntity
 import com.nsk.gamelabs.core.presentation.viewModel.HomeScreenViewModel
 import com.nsk.gamelabs.ui.theme.DarkerGrey
 
@@ -60,7 +61,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun GameCategory(
-    itemList: List<String>,
+    itemList: List<GenresEntity.Result>,
     selectedIndex: Int,
     onItemClick: (Int) -> Unit = {}
 
@@ -83,7 +84,7 @@ fun GameCategory(
 
             ){
                 Text(
-                    text = item,
+                    text = item.name,
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth()
