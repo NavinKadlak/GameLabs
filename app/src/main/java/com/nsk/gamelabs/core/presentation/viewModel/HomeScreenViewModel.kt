@@ -3,10 +3,12 @@ package com.nsk.gamelabs.core.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nsk.gamelabs.core.data.remote.model.GenresEntity
+import com.nsk.gamelabs.core.data.remote.model.TopGameEntity
 import com.nsk.gamelabs.core.domain.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -23,13 +25,25 @@ class HomeScreenViewModel  @Inject constructor(
 
     data class ChipUiState(
         val chips: List<GenresEntity.Result> = emptyList() ,
-        val selectedIndex: Int = 0,
+        val selectedIndex: Int = -1,
+        val isLoading : Boolean = false
+    )
+
+    data class TopUiState(
+        val topGames: List<TopGameEntity.Result> = emptyList(),
+        val selectedIndex: Int = -1,
         val isLoading : Boolean = false
     )
 
     private val _chipUiState = MutableStateFlow(ChipUiState())
     val chipUiState: StateFlow<ChipUiState> = _chipUiState
 
+
+    private val _topGame = MutableStateFlow(TopUiState())
+    val topGame: StateFlow<TopUiState> = _topGame
+
+    private val _bestOfAllTime = MutableStateFlow(TopUiState())
+    val bestOfAllTime: StateFlow<TopUiState> = _bestOfAllTime
 
     data class TopGamesUiState(
         val topGames: List<String> = emptyList(),
@@ -48,8 +62,25 @@ class HomeScreenViewModel  @Inject constructor(
         }*/
 
         viewModelScope.launch {
-            val data = repository.getGenres()
-            _chipUiState.update { it.copy(chips = data.results) }
+            try {
+              /*  val data = repository.getGenres()
+                _chipUiState.update { it.copy(chips = data.results) }
+*/
+                val getGenre = async { repository.getGenres() }
+                val getTopGame = async {  repository.getTopGames() }
+                val getAllTimeBest = async { repository.getAllTimeBest() }
+
+                val genre = getGenre.await()
+                val topGame = getTopGame.await()
+                val getAllTime = getAllTimeBest.await()
+
+                _chipUiState.update { it.copy(chips = genre.results) }
+                _topGame.update { it.copy(topGame.results) }
+                _bestOfAllTime.update { it.copy(getAllTime.results) }
+            }
+            catch (e : Exception){
+
+            }
 
         }
     }
@@ -59,36 +90,4 @@ class HomeScreenViewModel  @Inject constructor(
 
     }
 
-    /*private fun loadDataForChip(index: Int) {
-        currentLoadJob?.cancel()
-        currentLoadJob = viewModelScope.launch {
-            try {
-                _chipUiState.update { it.copy(isLoading = true) }
-               var chip = _chipUiState.value.chips.get(index)
-                val domainGames = repository.getGameListBasedOnCategoryID(index)
-                val uiGames = domainGames.map { it.toUiModel() }  // Extension/map
-                _chipUiState.update {
-                    it.copy(
-                        games = uiGames,
-                        isLoading = false
-                    )
-                }
-            } catch (e: Exception) { *//* error *//* }
-        }
-    }*/
-
-    fun loadTopGames(){
-
-        viewModelScope.launch {
-            try {
-               val topGames = repository.getTopGameList()
-                _topGamesUiState.update {
-                    it.copy( topGames = topGames)
-                }
-            }
-            catch (e : Exception){
-
-            }
-        }
-    }
 }

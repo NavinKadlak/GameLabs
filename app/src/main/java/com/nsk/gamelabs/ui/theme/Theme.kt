@@ -53,8 +53,11 @@ fun GameLabsTheme(
     }
 
     MaterialTheme(
-        colorScheme = DarkColorScheme,
+        colorScheme = colorScheme.copy(
+            background = Black,
+            surface = Grey
+        ),
         typography = Typography,
-        content = content
+        content = content,
     )
 }

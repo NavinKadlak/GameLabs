@@ -1,6 +1,8 @@
 package com.nsk.gamelabs.core.domain.repository
 
+import com.nsk.gamelabs.core.data.remote.model.GameDescriptionEntity
 import com.nsk.gamelabs.core.data.remote.model.GenresEntity
+import com.nsk.gamelabs.core.data.remote.model.TopGameEntity
 
 interface GameRepository {
     fun getChips(): List<String> {
@@ -23,4 +25,7 @@ interface GameRepository {
     }
 
    suspend fun getGenres() : GenresEntity
+   suspend fun getTopGames() : TopGameEntity
+   suspend fun getAllTimeBest() : TopGameEntity
+   suspend fun getGameDetails(id : Int) : GameDescriptionEntity
 }

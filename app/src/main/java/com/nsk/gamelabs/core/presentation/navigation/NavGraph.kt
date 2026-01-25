@@ -11,20 +11,27 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.nsk.gamelabs.core.presentation.navigation.screen.GameViewScreen
 import com.nsk.gamelabs.core.presentation.navigation.screen.HomeScreen
 import com.nsk.gamelabs.core.presentation.navigation.screen.LibraryScreen
+import com.nsk.gamelabs.core.presentation.navigation.screen.Routes
 import com.nsk.gamelabs.core.presentation.navigation.screen.SearchScreen
+import com.nsk.gamelabs.core.presentation.viewModel.GameDetailViewModel
 import com.nsk.gamelabs.core.presentation.viewModel.HomeScreenViewModel
 import com.nsk.gamelabs.core.presentation.viewModel.LibraryViewModel
 import com.nsk.gamelabs.core.presentation.viewModel.SearchViewModel
+import com.nsk.gamelabs.core.presentation.viewModel.SharedViewModel
+import okhttp3.Route
 
 
 // Main NavGraph function - Call this in Scaffold
@@ -34,8 +41,14 @@ import com.nsk.gamelabs.core.presentation.viewModel.SearchViewModel
 ) {
     val navController = rememberNavController()
 
+    val sharedVM: SharedViewModel = hiltViewModel()
+
     Scaffold(
-        bottomBar = { BottomNavBar(navController) },  // ← REQUIRED
+        bottomBar = {
+            if(shouldShowBottomBar(navController.currentBackStackEntryAsState().value?.destination)){
+                BottomNavBar(navController)
+            }
+           },  // ← REQUIRED
         modifier = modifier
     ) { paddingValues ->
         NavHost(
@@ -48,6 +61,7 @@ import com.nsk.gamelabs.core.presentation.viewModel.SearchViewModel
                 val viewModel: HomeScreenViewModel = hiltViewModel()
                 HomeScreen(
                     viewModel = viewModel,
+                    sharedViewModel = sharedVM,
                     navController = navController
                 )
             }
@@ -68,9 +82,28 @@ import com.nsk.gamelabs.core.presentation.viewModel.SearchViewModel
                     navController = navController
                 )
             }
+
+            // Detail Game Screen
+            composable(Routes.GameView.route) {
+                val viewModel: GameDetailViewModel = hiltViewModel()
+                GameViewScreen(
+                    viewModel = viewModel,
+                    sharedViewModel = sharedVM,
+                    navController = navController
+                )
+            }
         }
     }
 }
+
+fun shouldShowBottomBar(destination: NavDestination?): Boolean {
+    return when (destination?.route) {
+        "home", "search", "bookmark" -> true
+        else -> false  // Hide on detail/settings screens
+
+    }
+}
+
 
 
 

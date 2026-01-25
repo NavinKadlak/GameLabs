@@ -59,6 +59,10 @@ dependencies {
     implementation (libs.retrofit)
     implementation (libs.okhttp)
     implementation(libs.retrofit2.converter.gson)
+
+    // Coil for Compose (latest stable)
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
